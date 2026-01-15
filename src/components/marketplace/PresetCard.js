@@ -1,131 +1,190 @@
-import React from "react";
+import { useState } from "react";
 import {
-  FaVideo,
-  FaCamera,
-  FaMusic,
-  FaPaintBrush,
-  FaFilter,
-  FaRupeeSign,
   FaDownload,
+  FaRupeeSign,
+  FaStar,
+  FaFire,
+  FaShoppingCart,
 } from "react-icons/fa";
 
-const getCategoryIcon = (category) => {
-  switch (category) {
-    case "video":
-      return <FaVideo className="text-red-500" />;
-    case "photo":
-      return <FaCamera className="text-blue-500" />;
-    case "audio":
-      return <FaMusic className="text-green-500" />;
-    case "graphics":
-      return <FaPaintBrush className="text-purple-500" />;
-    default:
-      return <FaFilter className="text-gray-500" />;
-  }
-};
-
 const PresetCard = ({ preset, onBuy, isPurchasing, isOwned, onDownload }) => {
-  return (
-    <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden group">
-      {/* Image */}
-      <div className="relative h-48 bg-gray-200 overflow-hidden">
-        <img
-          src={
-            preset.thumbnail ||
-            preset.preview_image ||
-            "https://via.placeholder.com/400x300"
-          }
-          alt={preset.title}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-        />
+  const [setIsHovered] = useState(false);
 
-        {/* Category Badge */}
-        <div className="absolute top-3 left-3">
-          <span className="flex items-center space-x-1 bg-white/90 px-2 py-1 rounded-full text-sm">
-            {getCategoryIcon(preset.category)}
-            <span className="capitalize">{preset.category}</span>
+  const discount = preset.original_price
+    ? Math.round((1 - preset.price / preset.original_price) * 100)
+    : 0;
+
+  // Format category for display
+  const formatCategory = (category) => {
+    if (!category) return "Digital";
+    return category
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
+  return (
+    <div
+      className="relative bg-white rounded-3xl shadow-lg overflow-hidden group transition-all duration-500 transform hover:-translate-y-2 hover:shadow-2xl border border-gray-100"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* Discount Badge */}
+      {discount > 0 && (
+        <div className="absolute top-4 left-4 z-10">
+          <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+            -{discount}% OFF
           </span>
         </div>
+      )}
 
-        {/* Discount Badge */}
-        {preset.original_price && preset.original_price > preset.price && (
-          <div className="absolute top-3 right-3">
-            <span className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-              {Math.round((1 - preset.price / preset.original_price) * 100)}%
-              OFF
-            </span>
+      {/* Owned Badge */}
+      {isOwned && (
+        <div className="absolute top-4 right-4 z-10">
+          <span className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+            <FaDownload className="inline mr-1" />
+            Owned
+          </span>
+        </div>
+      )}
+
+      {/* Hot Badge for popular items */}
+      {preset.downloads > 1000 && !isOwned && (
+        <div className="absolute top-12 left-4 z-10">
+          <span className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+            <FaFire className="text-xs" />
+            HOT
+          </span>
+        </div>
+      )}
+
+      {/* Image/Preview Container */}
+      <div className="relative h-52 overflow-hidden bg-gradient-to-br from-gray-900 to-gray-700">
+        {preset.thumbnail || preset.preview_image ? (
+          <img
+            src={preset.thumbnail || preset.preview_image}
+            alt={preset.title}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="text-4xl text-white/40">
+              {preset.category === "video-presets" && "🎬"}
+              {preset.category === "audio" && "🎵"}
+              {preset.category === "software" && "💻"}
+              {preset.category === "study-notes" && "📚"}
+              {preset.category === "game-assets" && "🎮"}
+              {preset.category === "digital-assets" && "💎"}
+              {preset.category === "templates" && "📄"}
+              {preset.category === "mobile-apps" && "📱"}
+              {!preset.category && "📦"}
+            </div>
           </div>
         )}
 
-        {/* Owned Badge */}
-        {isOwned && (
-          <div className="absolute bottom-3 right-3">
-            <span className="bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-              Owned
-            </span>
-          </div>
-        )}
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
       </div>
 
-      {/* Content */}
-      <div className="p-4">
-        <h3 className="font-semibold text-lg text-gray-800 mb-2 line-clamp-1">
-          {preset.title}
-        </h3>
-        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-          {preset.description}
-        </p>
-
-        {/* Stats */}
-        <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+      {/* Content Area */}
+      <div className="p-6">
+        {/* Category & Downloads */}
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-xs font-semibold bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full uppercase tracking-wide">
+            {formatCategory(preset.category)}
+          </span>
           {preset.downloads > 0 && (
-            <span className="flex items-center">
-              <FaDownload className="mr-1" />
-              {preset.downloads}
-            </span>
+            <div className="flex items-center text-gray-600 text-sm">
+              <FaDownload className="mr-1.5" />
+              <span className="font-medium">
+                {preset.downloads.toLocaleString()}
+              </span>
+            </div>
           )}
-          {preset.file_size && <span>{preset.file_size}</span>}
         </div>
 
-        {/* Price and Action */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="flex items-center text-xl font-bold text-indigo-600">
-              <FaRupeeSign className="text-lg" />
+        {/* Title */}
+        <h3 className="font-bold text-lg mb-3 text-gray-900 line-clamp-2 group-hover:text-gray-800 transition-colors">
+          {preset.title}
+        </h3>
+
+        {/* Rating (if available) */}
+        {preset.rating && (
+          <div className="flex items-center mb-4">
+            <div className="flex text-yellow-400 mr-2">
+              {[...Array(5)].map((_, i) => (
+                <FaStar
+                  key={i}
+                  className={
+                    i < Math.floor(preset.rating)
+                      ? "fill-current"
+                      : "text-gray-300"
+                  }
+                />
+              ))}
+            </div>
+            <span className="text-sm text-gray-600">{preset.rating}/5.0</span>
+          </div>
+        )}
+
+        {/* Price Section */}
+        <div className="mb-6">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="flex items-center text-3xl font-black text-gray-900">
+              <FaRupeeSign className="text-xl" />
               {preset.price}
             </span>
             {preset.original_price && preset.original_price > preset.price && (
-              <span className="text-gray-400 line-through text-sm">
+              <span className="text-gray-400 line-through text-lg">
                 ₹{preset.original_price}
               </span>
             )}
           </div>
-
-          {isOwned ? (
-            <button
-              onClick={() => onDownload(preset)}
-              className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition"
-            >
-              <FaDownload />
-              <span>Download</span>
-            </button>
-          ) : (
-            <button
-              onClick={() => onBuy(preset)}
-              disabled={isPurchasing}
-              className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition disabled:opacity-50"
-            >
-              {isPurchasing ? (
-                <span>Processing...</span>
-              ) : (
-                <>
-                  <FaDownload />
-                  <span>Buy Now</span>
-                </>
-              )}
-            </button>
+          {discount > 0 && (
+            <div className="text-sm text-green-600 font-semibold">
+              Save ₹{(preset.original_price - preset.price).toLocaleString()} (
+              {discount}% off)
+            </div>
           )}
         </div>
+
+        {/* Action Button */}
+        {isOwned ? (
+          <button
+            onClick={() => onDownload(preset)}
+            className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-3.5 rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-300 transform hover:scale-[1.02] group flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+            disabled={isPurchasing}
+          >
+            <FaDownload className="group-hover:animate-bounce" />
+            <span>Download Now</span>
+          </button>
+        ) : (
+          <button
+            onClick={() => onBuy(preset)}
+            disabled={isPurchasing}
+            className={`w-full bg-gradient-to-r from-gray-900 to-black text-white font-bold py-3.5 rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-md hover:shadow-xl ${
+              isPurchasing
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:from-gray-800 hover:to-gray-900"
+            }`}
+          >
+            <div className="flex items-center justify-center gap-2">
+              {isPurchasing ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span>Processing...</span>
+                </>
+              ) : (
+                <>
+                  <FaShoppingCart />
+                  <span>Buy Now - ₹{preset.price}</span>
+                </>
+              )}
+            </div>
+          </button>
+        )}
+
+        {/* Quick View on Hover */}
       </div>
     </div>
   );

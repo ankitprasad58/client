@@ -1,65 +1,114 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { FaArrowRight, FaCheckCircle, FaPlay } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import { FaClock } from "react-icons/fa";
 
 const HeroSection = () => {
+  const [timer, setTimer] = useState(86400); // 24 hours in seconds
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimer((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const formatTime = (seconds) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  const psychologicalTriggers = [
+    {
+      icon: "🔥",
+      text: "🔥 TODAY ONLY: 500+ Creators Bought",
+      highlight: true,
+    },
+    { icon: "🎁", text: "First 100 buyers gets exciting free presets" },
+  ];
+
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
-      {/* Animated Background Elements */}
+    <section className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-purple-900 text-white">
+      {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse delay-1000"></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-3/4 left-3/4 w-64 h-64 bg-pink-500/20 rounded-full blur-3xl animate-pulse delay-500"></div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto py-16 md:py-24">
-        {/* Limited Time Offer Banner */}
-        <div className="text-center mb-8">
-          <span className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold rounded-full text-sm animate-bounce">
-            🔥 LIMITED TIME: 50% OFF on All Presets! Ends Soon
-          </span>
+      {/* Floating Elements */}
+      <div className="absolute top-10 left-10 animate-float">
+        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-2xl rotate-12">
+          <span className="text-2xl">💎</span>
         </div>
+      </div>
+      <div className="absolute bottom-20 right-10 animate-float delay-1000">
+        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-2xl -rotate-12">
+          <span className="text-2xl">🎯</span>
+        </div>
+      </div>
 
+      <div className="relative max-w-7xl mx-auto px-4 py-24 md:py-32">
         <div className="text-center">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-tight">
-            Transform Your
-            <span className="block bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-400 bg-clip-text text-transparent">
-              Creative Vision
+          {/* Scarcity Trigger */}
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-orange-500 text-white px-4 py-2 rounded-full mb-6 animate-pulse">
+            <FaClock className="animate-spin" />
+            <span className="font-bold">LIMITED OFFER ENDS IN:</span>
+            <span className="font-mono font-bold bg-black/30 px-3 py-1 rounded">
+              {formatTime(timer)}
             </span>
-          </h1>
-          <p className="text-xl md:text-2xl text-purple-100 mb-8 max-w-3xl mx-auto">
-            Professional presets used by{" "}
-            <strong>10,000+ Indian creators</strong>. Save hours of editing time
-            and create stunning content.
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Link
-              to="/marketplace"
-              className="group inline-flex items-center justify-center bg-white text-purple-900 font-bold py-4 px-8 rounded-full text-lg hover:bg-yellow-400 transition-all duration-300 transform hover:scale-105 shadow-2xl"
-            >
-              <span>Shop Now - 50% OFF</span>
-              <FaArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-            </Link>
-            <button className="inline-flex items-center justify-center border-2 border-white/30 text-white font-semibold py-4 px-8 rounded-full text-lg hover:bg-white/10 transition-all duration-300">
-              <FaPlay className="mr-2" />
-              Watch Demo
-            </button>
           </div>
 
-          {/* Trust Indicators */}
-          <div className="flex flex-wrap justify-center items-center gap-8 text-purple-200">
-            <div className="flex items-center">
-              <FaCheckCircle className="text-green-400 mr-2 text-xl" />
-              <span>Secure UPI & Card Payment</span>
-            </div>
-            <div className="flex items-center">
-              <FaCheckCircle className="text-green-400 mr-2 text-xl" />
-              <span>Instant Download</span>
-            </div>
-            <div className="flex items-center">
-              <FaCheckCircle className="text-green-400 mr-2 text-xl" />
-              <span>Lifetime Access</span>
+          {/* FOMO Elements */}
+          <div className="flex flex-wrap justify-center gap-3 mb-6">
+            {psychologicalTriggers.map((trigger, index) => (
+              <div
+                key={index}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg ${
+                  trigger.highlight
+                    ? "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30"
+                    : "bg-white/5"
+                }`}
+              >
+                <span>{trigger.icon}</span>
+                <span className="text-sm font-medium">{trigger.text}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Main Headline with Emotional Triggers */}
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight">
+            <span className="block bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 bg-clip-text text-transparent">
+              STOP WASTING TIME
+            </span>
+            <span className="block text-3xl md:text-5xl font-bold text-gray-300 mt-4">
+              Get The Exact Tools Top Creators Use
+            </span>
+          </h1>
+
+          <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
+            <span className="bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent font-bold">
+              10,467 creators
+            </span>{" "}
+            transformed their workflow this month.{" "}
+            <span className="text-yellow-300">Will you be next?</span>
+          </p>
+
+          {/* Social Proof Bar */}
+          <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 mb-8 max-w-2xl mx-auto">
+            <div className="flex items-center justify-between">
+              <div className="text-left">
+                <div className="text-lg font-bold">✨ 4.9/5 Rating</div>
+                <div className="text-sm text-gray-400">
+                  Based on 2,847 reviews
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-lg font-bold">🚀 Lifetime Access</div>
+                <div className="text-sm text-gray-400">Instant download</div>
+              </div>
             </div>
           </div>
         </div>

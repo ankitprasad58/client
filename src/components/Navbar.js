@@ -41,7 +41,9 @@ const Navbar = () => {
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2">
               <FaShoppingBag className="h-8 w-8 text-indigo-600" />
-              <span className="font-bold text-xl text-gray-900">PresetHub</span>
+              <span className="font-bold text-xl text-gray-900">
+                Market Station
+              </span>
             </Link>
           </div>
 

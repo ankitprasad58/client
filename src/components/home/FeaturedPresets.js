@@ -1,101 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FaDownload, FaArrowRight, FaRupeeSign } from "react-icons/fa";
+import { FaArrowRight, FaFire } from "react-icons/fa";
 import { presetService, authService } from "../../services";
 import { usePurchase } from "../../hooks";
 import { GuestCheckoutModal } from "../marketplace";
-
-const PresetCard = ({ preset, onBuy, isPurchasing, isOwned, onDownload }) => {
-  const discount = preset.original_price
-    ? Math.round((1 - preset.price / preset.original_price) * 100)
-    : 0;
-
-  return (
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden group hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-      {/* Image Container */}
-      <div className="relative overflow-hidden">
-        <img
-          src={
-            preset.thumbnail ||
-            preset.preview_image ||
-            "https://via.placeholder.com/400x300"
-          }
-          alt={preset.title}
-          className="w-full h-52 object-cover group-hover:scale-110 transition-transform duration-500"
-        />
-        {discount > 0 && (
-          <span className="absolute top-4 left-4 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-            {discount}% OFF
-          </span>
-        )}
-        {isOwned && (
-          <span className="absolute top-4 right-4 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-            Owned
-          </span>
-        )}
-        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-          <Link
-            to="/marketplace"
-            className="bg-white text-purple-600 font-semibold px-6 py-2 rounded-full transform translate-y-4 group-hover:translate-y-0 transition-transform"
-          >
-            Quick View
-          </Link>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-semibold text-purple-600 bg-purple-100 px-2 py-1 rounded capitalize">
-            {preset.category}
-          </span>
-          {preset.downloads > 0 && (
-            <div className="flex items-center text-gray-500 text-sm">
-              <FaDownload className="mr-1" />
-              {preset.downloads.toLocaleString()}
-            </div>
-          )}
-        </div>
-
-        <h3 className="font-bold text-lg mb-3 text-gray-900 line-clamp-1">
-          {preset.title}
-        </h3>
-
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <span className="flex items-center text-2xl font-extrabold text-purple-600">
-              <FaRupeeSign className="text-xl" />
-              {preset.price}
-            </span>
-            {preset.original_price && preset.original_price > preset.price && (
-              <span className="text-gray-400 line-through text-sm">
-                ₹{preset.original_price}
-              </span>
-            )}
-          </div>
-        </div>
-
-        {isOwned ? (
-          <button
-            onClick={() => onDownload(preset)}
-            className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white text-center font-semibold py-3 rounded-xl hover:from-green-600 hover:to-green-700 transition-all flex items-center justify-center gap-2"
-          >
-            <FaDownload />
-            Download
-          </button>
-        ) : (
-          <button
-            onClick={() => onBuy(preset)}
-            disabled={isPurchasing}
-            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-center font-semibold py-3 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all disabled:opacity-50"
-          >
-            {isPurchasing ? "Processing..." : "Buy Now"}
-          </button>
-        )}
-      </div>
-    </div>
-  );
-};
+import { PresetCard } from "../marketplace";
 
 const FeaturedPresets = () => {
   const [presets, setPresets] = useState([]);
@@ -127,9 +36,12 @@ const FeaturedPresets = () => {
         presetService.getAllPresets(),
         isLoggedIn ? presetService.getOwnedPresets() : {},
       ]);
+
+      // Sort by downloads and get top 4
       const sortedPresets = presetsData
         .sort((a, b) => (b.downloads || 0) - (a.downloads || 0))
-        .slice(0, 3);
+        .slice(0, 4);
+
       setPresets(sortedPresets);
       setOwnedPresets(owned);
     } catch (error) {
@@ -143,15 +55,28 @@ const FeaturedPresets = () => {
     return (
       <section className="py-16">
         <div className="text-center mb-12">
-          <span className="inline-block bg-red-100 text-red-600 font-semibold px-4 py-1 rounded-full text-sm mb-4">
-            🔥 HOT DEALS
-          </span>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Best Selling Presets
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-2 rounded-full mb-6 animate-pulse">
+            <FaFire className="animate-spin-slow" />
+            <span className="font-bold">🔥 TRENDING RIGHT NOW</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-black mb-6">
+            <span className="bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 bg-clip-text text-transparent">
+              Everyone's Buying These
+            </span>
           </h2>
         </div>
-        <div className="flex justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-600"></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {[1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              className="bg-white rounded-3xl p-6 shadow-lg animate-pulse"
+            >
+              <div className="h-48 bg-gray-200 rounded-2xl mb-4"></div>
+              <div className="h-4 bg-gray-200 rounded mb-2"></div>
+              <div className="h-4 bg-gray-200 rounded mb-4 w-3/4"></div>
+              <div className="h-10 bg-gray-200 rounded"></div>
+            </div>
+          ))}
         </div>
       </section>
     );
@@ -163,20 +88,27 @@ const FeaturedPresets = () => {
 
   return (
     <section className="py-16">
+      {/* Section Header */}
       <div className="text-center mb-12">
-        <span className="inline-block bg-red-100 text-red-600 font-semibold px-4 py-1 rounded-full text-sm mb-4">
-          🔥 HOT DEALS
-        </span>
-        <h2 className="text-3xl md:text-4xl font-bold mb-4">
-          Best Selling Presets
+        <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-2 rounded-full mb-4">
+          <FaFire className="animate-pulse" />
+          <span className="font-bold">🔥 TRENDING RIGHT NOW</span>
+        </div>
+
+        <h2 className="text-4xl md:text-5xl font-black mb-6">
+          <span className="bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 bg-clip-text text-transparent">
+            Everyone's Buying These
+          </span>
         </h2>
-        <p className="text-gray-600 max-w-2xl mx-auto">
-          Join thousands of creators who transformed their content with these
-          presets
+
+        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          Join thousands of creators who are already using these premium digital
+          products
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {/* Presets Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {presets.map((preset) => (
           <PresetCard
             key={preset.id}
@@ -189,13 +121,14 @@ const FeaturedPresets = () => {
         ))}
       </div>
 
-      <div className="text-center mt-10">
+      {/* View All Link */}
+      <div className="text-center mt-12">
         <Link
           to="/marketplace"
-          className="inline-flex items-center text-purple-600 font-semibold hover:text-purple-700 text-lg"
+          className="inline-flex items-center justify-center border-2 border-gray-900 text-gray-900 font-bold py-3 px-8 rounded-2xl hover:bg-gray-900 hover:text-white transition-all duration-300 group"
         >
-          View All Presets
-          <FaArrowRight className="ml-2" />
+          <span>View All Premium Products</span>
+          <FaArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" />
         </Link>
       </div>
 
