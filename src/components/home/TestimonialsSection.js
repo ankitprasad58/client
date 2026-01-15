@@ -1,90 +1,164 @@
 import React, { useState, useEffect } from "react";
-import { FaStar, FaQuoteLeft } from "react-icons/fa";
-import aditya from "../../assets/Aditya.jpg";
+import {
+  FaStar,
+  FaQuoteLeft,
+  FaRupeeSign,
+  FaCheckCircle,
+} from "react-icons/fa";
 
 const testimonials = [
   {
-    name: "Aditya Shrivas",
-    role: "YouTuber, 500K Subs",
-    image: aditya,
-    text: "These presets saved me 10+ hours every week. My videos look cinematic now!",
+    name: "Rahul Sharma",
+    role: "Professional Video Editor",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Rahul",
+    text: "Bought Adobe Suite for just ₹1499! Saved ₹11,000. Working flawlessly for 6 months now. Support team helped me install everything.",
     rating: 5,
+    purchase: "Adobe Master Collection",
+    savings: "₹11,500",
+    verified: true,
   },
   {
     name: "Priya Patel",
-    role: "Wedding Photographer",
-    image: "https://randomuser.me/api/portraits/women/44.jpg",
-    text: "Best investment for my photography business. Clients love the results!",
+    role: "College Student",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Priya",
+    text: "Got all my semester notes here. PDFs were perfectly organized. Scored 9.2 GPA this semester! Best investment ever.",
     rating: 5,
+    purchase: "Engineering Notes Bundle",
+    savings: "₹8,000",
+    verified: true,
   },
   {
     name: "Arjun Verma",
-    role: "Music Producer",
-    image: "https://randomuser.me/api/portraits/men/67.jpg",
-    text: "The audio presets are incredible. Professional quality at affordable price.",
+    role: "Game Developer",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Arjun",
+    text: "Unity assets pack saved my indie game project. Professional quality at 1/10th the price. Customer support is amazing!",
     rating: 5,
+    purchase: "Game Assets Pack",
+    savings: "₹15,000",
+    verified: true,
+  },
+  {
+    name: "Sneha Reddy",
+    role: "Content Creator",
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sneha",
+    text: "Video presets transformed my YouTube channel. Engagement doubled in 2 weeks. The LUTs are studio-quality!",
+    rating: 5,
+    purchase: "Video Preset Pack",
+    savings: "₹6,000",
+    verified: true,
   },
 ];
 
 const TestimonialsSection = () => {
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+      setActiveIndex((prev) => (prev + 1) % testimonials.length);
     }, 5000);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <section className="py-16 bg-gray-900 text-white -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-3xl md:text-4xl font-bold mb-12">
-          Loved by <span className="text-purple-400">10,000+</span> Creators
-        </h2>
+    <section className="py-20 bg-gradient-to-b from-gray-900 to-black text-white">
+      <div className="max-w-7xl mx-auto px-4">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-black mb-6">
+            <span className="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+              Real Stories,
+            </span>{" "}
+            Real Savings
+          </h2>
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+            Join thousands who saved lakhs while getting premium digital
+            products
+          </p>
+        </div>
 
-        <div className="relative">
-          <FaQuoteLeft className="text-4xl text-purple-500/30 absolute -top-4 left-0" />
-          <div className="bg-gray-800 rounded-2xl p-8 md:p-12">
-            <p className="text-xl md:text-2xl text-gray-300 mb-8 italic">
-              "{testimonials[currentTestimonial].text}"
-            </p>
-            <div className="flex items-center justify-center gap-4">
-              <img
-                src={testimonials[currentTestimonial].image}
-                alt={testimonials[currentTestimonial].name}
-                className="w-14 h-14 rounded-full border-2 border-purple-500 object-cover"
-              />
-              <div className="text-left">
-                <div className="font-bold">
-                  {testimonials[currentTestimonial].name}
+        {/* Stats Bar */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+          <div className="text-center p-6 bg-white/5 rounded-2xl">
+            <div className="text-3xl font-black text-yellow-400">₹4.2Cr+</div>
+            <div className="text-gray-400">Total Savings</div>
+          </div>
+          <div className="text-center p-6 bg-white/5 rounded-2xl">
+            <div className="text-3xl font-black text-green-400">10K+</div>
+            <div className="text-gray-400">Happy Customers</div>
+          </div>
+          <div className="text-center p-6 bg-white/5 rounded-2xl">
+            <div className="text-3xl font-black text-blue-400">98.7%</div>
+            <div className="text-gray-400">Satisfaction Rate</div>
+          </div>
+          <div className="text-center p-6 bg-white/5 rounded-2xl">
+            <div className="text-3xl font-black text-purple-400">24/7</div>
+            <div className="text-gray-400">Support Available</div>
+          </div>
+        </div>
+
+        {/* Testimonials Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {testimonials.map((testimonial, index) => (
+            <div
+              key={index}
+              className={`bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 border ${
+                index === activeIndex
+                  ? "border-yellow-500 shadow-2xl shadow-yellow-500/20"
+                  : "border-gray-700"
+              } transition-all duration-500`}
+              onMouseEnter={() => setActiveIndex(index)}
+            >
+              {/* Header */}
+              <div className="flex items-start justify-between mb-6">
+                <div className="flex items-center gap-4">
+                  <img
+                    src={testimonial.avatar}
+                    alt={testimonial.name}
+                    className="w-14 h-14 rounded-full border-2 border-yellow-500"
+                  />
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-bold text-xl">{testimonial.name}</h3>
+                      {testimonial.verified && (
+                        <FaCheckCircle className="text-green-400" />
+                      )}
+                    </div>
+                    <p className="text-gray-400">{testimonial.role}</p>
+                  </div>
                 </div>
-                <div className="text-gray-400 text-sm">
-                  {testimonials[currentTestimonial].role}
+                <div className="flex items-center text-yellow-400">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <FaStar key={i} />
+                  ))}
                 </div>
               </div>
-              <div className="flex text-yellow-400 ml-4">
-                {[...Array(testimonials[currentTestimonial].rating)].map(
-                  (_, i) => (
-                    <FaStar key={i} />
-                  )
-                )}
+
+              {/* Quote */}
+              <div className="relative mb-8">
+                <FaQuoteLeft className="text-4xl text-yellow-500/30 mb-4" />
+                <p className="text-gray-300 text-lg italic pl-10">
+                  "{testimonial.text}"
+                </p>
+              </div>
+
+              {/* Purchase Info */}
+              <div className="bg-gray-900/50 rounded-2xl p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-sm text-gray-400">Purchased</div>
+                    <div className="font-bold">{testimonial.purchase}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm text-gray-400">Total Savings</div>
+                    <div className="font-bold text-green-400 flex items-center">
+                      <FaRupeeSign />
+                      {testimonial.savings}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-
-          {/* Dots */}
-          <div className="flex justify-center gap-2 mt-6">
-            {testimonials.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentTestimonial(index)}
-                className={`w-3 h-3 rounded-full transition-colors ${
-                  index === currentTestimonial ? "bg-purple-500" : "bg-gray-600"
-                }`}
-              />
-            ))}
-          </div>
+          ))}
         </div>
       </div>
     </section>
